@@ -1,0 +1,25 @@
+services:
+  9router:
+    image: docker.io/decolua/9router:latest
+    ports:
+      - "127.0.0.1:__PORT__:__PORT__"
+    volumes:
+      - "__HOST_DATA_DIR__:/app/data:Z"
+    env_file:
+      - __ENV_FILE__
+    restart: always
+    networks:
+      - 9router-net
+
+  #__HEADROOM_START__
+  headroom:
+    image: ghcr.io/chopratejas/headroom:latest
+    ports:
+      - "127.0.0.1:8787:8787"
+    restart: always
+    networks:
+      - 9router-net
+  #__HEADROOM_END__
+
+networks:
+  9router-net:

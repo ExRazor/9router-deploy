@@ -1,0 +1,16 @@
+[Unit]
+Description=Headroom - Token compression proxy for 9Router
+After=network-online.target
+
+[Container]
+Image=ghcr.io/chopratejas/headroom:latest
+ContainerName=headroom
+Network=9router.network
+PublishPort=127.0.0.1:8787:8787
+AutoUpdate=registry
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

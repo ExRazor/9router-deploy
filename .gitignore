@@ -1,0 +1,6 @@
+# Secret & data lokal
+.env
+data/
+
+# Generated oleh deploy.sh (berisi path absolut host)
+docker-compose.yml

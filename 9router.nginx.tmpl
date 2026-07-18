@@ -1,0 +1,44 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name __DOMAIN__;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name __DOMAIN__;
+
+    ssl_certificate         /etc/ssl/__CERT_BASE_DOMAIN__/cert.pem;
+    ssl_certificate_key     /etc/ssl/__CERT_BASE_DOMAIN__/privkey.pem;
+    #__AOP_START__
+    ssl_client_certificate  /etc/ssl/__CERT_BASE_DOMAIN__/cloudflare_ca.pem;
+    ssl_verify_client       on;
+    #__AOP_END__
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    client_max_body_size 20m;
+
+    location / {
+        proxy_pass http://127.0.0.1:__PORT__;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # 9Router pakai SSE, jangan dibuffer
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+        chunked_transfer_encoding off;
+
+        # SSE murni, bukan WebSocket -- kosongkan Connection biar keepalive
+        # ke upstream gak "nyangkut" dan nyampur response antar request
+        proxy_set_header Connection "";
+    }
+}

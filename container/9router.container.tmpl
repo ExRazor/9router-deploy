@@ -1,0 +1,18 @@
+[Unit]
+Description=9Router - AI Model Router
+After=network-online.target
+
+[Container]
+Image=docker.io/decolua/9router:latest
+ContainerName=9router
+Network=9router.network
+PublishPort=127.0.0.1:__PORT__:__PORT__
+Volume=__HOST_DATA_DIR__:/app/data:Z
+EnvironmentFile=__ENV_FILE__
+AutoUpdate=registry
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
